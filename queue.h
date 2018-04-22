@@ -120,8 +120,24 @@ Status TraverseLQueue(const LQueue *Q,void (*foo)(LQueue *Q,void *q));
 //操作函数
 void LPrint(LQueue *Q,void *q);
 
+/*********菜单************/
+
+//控制光标函数，使光标跳转到（X，Y）坐标上
+
+void goto_xy(int x,int y);
+
+//创建输出表格
+
+void Output_Table(int n);
+
+/***顺序队列菜单*****/
+void nemuAQueue();
 
 
+/**链式队列菜单****/
+void nemuLQueue();
 
+//总菜单
+void nemu();
 
 
