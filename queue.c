@@ -1,12 +1,13 @@
+#include<windows.h>
 #include"queue.h"
-
+int flag;
 /**************顺序队列**********************/
 
 //初始化队列
 void InitAQueue(AQueue *Q,int flag)
 {
     void *Array;
-    if(flag == 1)
+    if(flag == 1)                   //flag标记为1表示数据类型为char型，2为int型
         Q->size=sizeof(char);
     if(flag == 2)
         Q->size=sizeof(int);
@@ -18,7 +19,7 @@ void InitAQueue(AQueue *Q,int flag)
 }
 
 //销毁队列
-void DestoryAQueue(AQueue *Q)
+void DestroyAQueue(AQueue *Q)
 {
     free(Q->array);
     free(Q);
@@ -27,7 +28,7 @@ void DestoryAQueue(AQueue *Q)
 //判断是否队列已满
 Status IsFullAQueue(const AQueue *Q)
 {
-    if((Q->end+1)%(Q->length) == Q->first)
+    if(Q->end == Q->length)
         return ture;
     return false;
 }
@@ -44,33 +45,47 @@ Status IsEmptyAQueue(const AQueue *Q)
 Status GetHeadAQueue(AQueue *Q,void *e)
 {
     if(IsEmptyAQueue(Q))
-        return;
+        return  false;
     void *elemAddr;
-    //char型只有一个字节，所以可以将基类型强制转换为char型，再加上相应的长度实现地址的偏移
+    //char型只有一个字节，所以可以将基类型强制转换为char型，
+    //再加上相应的长度实现地址的偏移，下面的与此相同
     elemAddr=(char*)(Q->array)+(Q->first)*(Q->size);
+    //将指针elemAddr开始的Q->size个字节的数据复制到指针e指向的地址中
     memcpy(e,elemAddr,Q->size);
+    return ture;
+}
+
+//查看当前队列长度
+int LengthAQueue(AQueue *Q)
+{
+    if((Q == NULL) || IsEmptyAQueue(Q))
+        return 0;
+    else
+        return (Q->end - Q->first);
 }
 
 //进队
-void InAQueue(AQueue *Q,void *data)
+Status InAQueue(AQueue *Q,void *data)
 {
     if(IsFullAQueue(Q))
-        return;
+        return false;
     void *elemAddr;
     elemAddr=(char*)(Q->array)+(Q->end)*(Q->size);
     memcpy(elemAddr,data,Q->size);
-    Q->end=(Q->end++)%(Q->length);
+    Q->end++;
+    return ture;
 }
 
 //出队
-void OutAQueue(AQueue *Q,void *data)
+Status OutAQueue(AQueue *Q,void *data)
 {
     if(IsEmptyAQueue(Q))
-        return;
+        return false;
     void *elemAddr;
     elemAddr=(char*)(Q->array)+(Q->first)*(Q->size);
     memcpy(data,elemAddr,Q->size);
-    Q->first=(Q->first++)%(Q->length);
+    Q->first++;
+    return ture;
 }
 
 //清空队列
@@ -81,14 +96,36 @@ void ClearAQueue(AQueue *Q)
 }
 
 //遍历队列
-Status TraverseAQueue(const AQueue *Q,void (*foo)(void *q))
+Status TraverseAQueue(const AQueue *Q,void (*foo)(AQueue *Q,void *q))
 {
-    ;
+    if((Q == NULL) || IsEmptyAQueue(Q))
+        return false;
+    int i;
+    void *elemAddr;
+    i=Q->first;
+    while(i < Q->end)
+    {
+        elemAddr=(char*)(Q->array)+i*(Q->size);
+        foo(Q,elemAddr);
+        i++;
+    }
+    return ture;
 }
 
-void APrint(void *q)
+void APrint(AQueue *Q,void *q)
 {
-    ;
+    int a;
+    char b;
+    if(Q->size == sizeof(char))
+    {
+        memcpy(&b,q,Q->size);
+        printf("%c\n",b);
+    }
+    if(Q->size == sizeof(int))
+    {
+        memcpy(&a,q,Q->size);
+        printf("%d\n",a);
+    }
 }
 
 /***************链式队列*******************/
@@ -100,8 +137,9 @@ void InitLQueue(LQueue *Q,int flag)
     if(flag == 2)
         Q->size=sizeof(int);
     Node *p;
-    p=malloc(Q->size);
+    p=(Node*)malloc(sizeof(Node));
     p->next=NULL;
+    p->data=malloc(Q->size);
     Q->front=p;
     Q->rear=p;
     Q->length=0;
@@ -151,12 +189,19 @@ int LengthLQueue(LQueue *Q)
 Status EnLQueue(LQueue *Q,void *data)
 {
     Node *p;
-    p=malloc(Q->size);
-    if((Q == NULL) || (p == NULL))
+    p=(Node*)malloc(sizeof(Node));
+    p->data=malloc(Q->size);
+    if((Q == NULL) || (p == NULL) || (p->data == NULL))
         return false;
     p->next=NULL;
-    Q->rear->next=p;
+    (Q->rear)->next=p;
+
+    /******
+        printf("   ");
+        之前p->data没有分配地址，导致memcpy函数出错，可是不知道为什么加了printf以后程序就没有崩，虽然也是错的。
+    *******/
     memcpy(p->data,data,Q->size);
+
     Q->rear=p;
     Q->length++;
     return ture;
@@ -186,6 +231,37 @@ void ClearLQueue(LQueue *Q)
         p=p->next;
     }
     Q->length=0;
+}
+
+//遍历队列
+Status TraverseLQueue(const LQueue *Q,void (*foo)(LQueue *Q,void *q))
+{
+    if((Q == NULL) || (IsEmptyLQueue(Q)))
+        return false;
+    Node *p;
+    p=Q->front;
+    while(p!=Q->rear)
+    {
+        p=p->next;
+        foo(Q,p->data);
+    }
+    return ture;
+}
+
+void LPrint(LQueue *Q,void *q)
+{
+    int a;
+    char b;
+    if(Q->size == sizeof(int))
+    {
+        memcpy(&a,q,Q->size);
+        printf("%d\n",a);
+    }
+    if(Q->size == sizeof(char))
+    {
+        memcpy(&b,q,Q->size);
+        printf("%c\n",b);
+    }
 }
 
 
