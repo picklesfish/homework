@@ -1,0 +1,88 @@
+#include<reg52.h>
+unsigned int TIME;
+unsigned char i;
+unsigned char j;
+unsigned char k;
+unsigned char l;
+sbit n1=P3^0;
+sbit n2=P3^1;
+sbit n3=P3^2;
+sbit n4=P3^3;
+sbit beep=P3^7;
+
+//用数组来表示数码管要显示的数字。
+unsigned code num[11]={63,6,91,79,102,109,125,7,127,111};
+
+void delay(unsigned char time)		//延时
+{
+	while(time--)
+	{ ; }
+}
+
+void main( )
+{	
+	P1=170;			//二进制为10101010，控制灯闪烁
+	beep=1;			//控制蜂鸣器
+	i=0;
+	j=0;
+	k=0;
+	l=0;
+	while(1)
+	{
+		P1= ~ P1;
+		beep= ~ beep;
+		
+		P2=num[i];
+		n1=0;
+		n2=1;
+		n3=1;
+		n4=1;
+		TIME=1000 000 000 000 000 000;
+		delay(TIME);
+		
+		P2=num[i];
+		n1=1;
+		n2=0;
+		n3=1;
+		n4=1;
+		TIME=1000 000 000 000 000 000;
+		delay(TIME);
+		
+		P2=num[i];
+		n1=1;
+		n2=1;
+		n3=0;
+		n4=1;
+		TIME=1000 000 000 000 000 000;
+		delay(TIME);
+		
+		P2=num[i];
+		n1=1;
+		n2=1;
+		n3=1;
+		n4=0;
+		TIME=1000 000 000 000 000 000;
+		delay(TIME);
+		
+		i++;
+		if(i==10)
+		{
+			i=0;
+			j++;
+			if(j==10)
+			{
+				j=0;
+				k++;
+				if(k==10)
+				{
+					l++;
+					if(l==10)
+					break;
+				}
+			}
+		}
+		TIME=1000 000 000 000 000 000 000 000;
+		delay(TIME);
+	}
+	
+}
