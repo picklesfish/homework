@@ -3,6 +3,7 @@
 #include<time.h>
 #include<unistd.h>
 
+//将数据写进文件中
 void writedata()
 {
     FILE *f1=fopen("testdata1.txt","w");
@@ -346,52 +347,166 @@ void RadixCountSortTest(long n)
 }
 
 /****************小数据测试*******************/
-void InsertTest(dataType *ch)
+void InsertTest()
 {
+    dataType ch[100];
+    long i,temp;
+    int j;
+    FILE *f=fopen("小数据测试.txt","r");
+    if(f == NULL)
+    {
+        printf("can't open the file");
+        Sleep(1000);
+        exit(0);
+    }
+
     clock_t start = clock();
-    InsertSort(ch,100);
+    for(i=0;i<200000;i++)
+    {
+        fscanf(f,"\n%ld\n",&temp);
+        for(j=0;j<100;j++)
+            fscanf(f,"%ld\t",&ch[j]);
+        InsertSort(ch,100);
+    }
     clock_t end = clock() - start;
-    printf("插入：%dus\n",end);
+    fclose(f);
+    goto_xy(24,12);
+    printf("%dus",end);
 }
 
-void mergeTest(dataType *ch)
+void mergeTest()
 {
+    dataType ch[100];
+    long i,temp;
+    int j;
+    FILE *f=fopen("小数据测试.txt","r");
+    if(f == NULL)
+    {
+        printf("can't open the file");
+        Sleep(1000);
+        exit(0);
+    }
+
     clock_t start = clock();
-    merge_sort(ch,0,100);
+    for(i=0;i<200000;i++)
+    {
+        fscanf(f,"\n%ld\n",&temp);
+        for(j=0;j<100;j++)
+            fscanf(f,"%ld\t",&ch[j]);
+        merge_sort(ch,0,100);
+    }
     clock_t end = clock() - start;
-    printf("合并：%dus\n",end);
+    fclose(f);
+    goto_xy(37,12);
+    printf("%dus",end);
 }
 
-void QSort_Test(dataType *ch)
+void QSort_Test()
 {
+    dataType ch[100];
+    long i,temp;
+    int j;
+    FILE *f=fopen("小数据测试.txt","r");
+    if(f == NULL)
+    {
+        printf("can't open the file");
+        Sleep(1000);
+        exit(0);
+    }
+
     clock_t start = clock();
-    QSort(ch,100);
+    for(i=0;i<200000;i++)
+    {
+        fscanf(f,"\n%ld\n",&temp);
+        for(j=0;j<100;j++)
+            fscanf(f,"%ld\t",&ch[j]);
+       QSort(ch,100);
+    }
     clock_t end = clock() - start;
-    printf("快排：%dus\n",end);
+    fclose(f);
+    goto_xy(50,12);
+    printf("%dus",end);
 }
 
-void QSort_R_Test(dataType *ch)
+void QSort_R_Test()
 {
+    dataType ch[100];
+    long i,temp;
+    int j;
+    FILE *f=fopen("小数据测试.txt","r");
+    if(f == NULL)
+    {
+        printf("can't open the file");
+        Sleep(1000);
+        exit(0);
+    }
+
     clock_t start = clock();
-    QSort_Recursion(ch,0,100);
+    for(i=0;i<200000;i++)
+    {
+        fscanf(f,"\n%ld\n",&temp);
+        for(j=0;j<100;j++)
+            fscanf(f,"%ld\t",&ch[j]);
+        QSort_Recursion(ch,0,100);
+    }
     clock_t end = clock() - start;
-    printf("递归快排：%dus\n",end);
+    fclose(f);
+    goto_xy(63,12);
+    printf("%dus",end);
 }
 
-void CountTest(dataType *ch)
+void CountTest()
 {
+    dataType ch[100];
+    long i,temp;
+    int j;
+    FILE *f=fopen("小数据测试.txt","r");
+    if(f == NULL)
+    {
+        printf("can't open the file");
+        Sleep(1000);
+        exit(0);
+    }
+
     clock_t start = clock();
-    CountSort(ch,100);
+    for(i=0;i<200000;i++)
+    {
+        fscanf(f,"\n%ld\n",&temp);
+        for(j=0;j<100;j++)
+            fscanf(f,"%ld\t",&ch[j]);
+        CountSort(ch,100);
+    }
     clock_t end = clock() - start;
-    printf("计数：%dus\n",end);
+    fclose(f);
+    goto_xy(76,12);
+    printf("%dus",end);
 }
 
-void RadixTest(dataType *ch)
+void RadixTest()
 {
+    dataType ch[100];
+    long i,temp;
+    int j;
+    FILE *f=fopen("小数据测试.txt","r");
+    if(f == NULL)
+    {
+        printf("can't open the file");
+        Sleep(1000);
+        exit(0);
+    }
+
     clock_t start = clock();
-    RadixCountSort(ch,100);
+    for(i=0;i<200000;i++)
+    {
+        fscanf(f,"\n%ld\n",&temp);
+        for(j=0;j<100;j++)
+            fscanf(f,"%ld\t",&ch[j]);
+        RadixCountSort(ch,100);
+    }
     clock_t end = clock() - start;
-    printf("基数：%dus\n",end);
+    fclose(f);
+    goto_xy(89,12);
+    printf("%dus",end);
 }
 
 /****************菜单********************/
@@ -451,6 +566,7 @@ void menu()
     menu();
 }
 
+//大量小数据测试
 void numberTest()
 {
     long i;
@@ -462,43 +578,41 @@ void numberTest()
         Sleep(1000);
         exit(0);
     }
-    FILE *f2=fopen("小数据排序后.txt","w");
-    if(f2 == NULL)
-    {
-        printf("can't open the file");
-        Sleep(1000);
-        exit(0);
-    }
-
     dataType *ch[100];
     srand(time(NULL));
     for(i=0;i<100000;i++)
     {
-        fprintf(f1,"\nNO.%ld\n",i);
+        fprintf(f1,"\n%ld\n",i);
         for(j=0;j<100;j++)
         {
             ch[j]=rand()%1000;
             fprintf(f1,"%ld\t",ch[j]);
         }
-
-        printf("\nNO.%ld用时:\n",i);
-
-        InsertTest(ch);
-        mergeTest(ch);
-        QSort_Test(ch);
-        QSort_R_Test(ch);
-        CountTest(ch);
-        RadixTest(ch);
-
-        fprintf(f2,"\nNO.%ld\n",i);
-        for(j=0;j<100;j++)
-            fprintf(f2,"%ld\t",ch[j]);
     }
     fclose(f1);
-    fclose(f2);
+    Output_Table();
+    for(i=0;i<6;i++)
+    {
+        goto_xy(24+13*i,10);
+        printf("100");
+    }
+    goto_xy(20,18);
+    printf("请稍等。。。");
+
+    InsertTest();
+    mergeTest();
+    QSort_Test();
+    QSort_R_Test();
+    CountTest();
+    RadixTest();
+
+    goto_xy(20,18);
+    printf("                 ");
     getchar();
+    system("cls");
 }
 
+//大数据量测试
 void bigDataTest(int a)
 {
     long m,i;
@@ -562,6 +676,7 @@ void goto_xy(int x,int y)
     SetConsoleCursorPosition(hOut,pos);
 }
 
+//输出表格
 void Output_Table()
 {
     int i,j;
