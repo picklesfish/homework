@@ -205,27 +205,49 @@ void input_Expression(Expression *head)
     Expression *p;
     char s[100];
     int i=0,num=0;
+    int w=0;
     p=(Expression*)malloc(sizeof(Expression));
     head->next=p;
     p->next=NULL;
 
     goto_xy(11,5);
     gets(s);
+    if((s[i] == '-'))         //第一个字符为负号的时候
+    {
+        w=1;
+        i++;
+    }
     while((s[i]>='0') && (s[i]<='9'))   //操作数可能是两位数甚至更多，假设数值都比较小，计算以后也不会溢出
     {
         num=num*10+s[i++]-'0';
     }
     if(num!=0)
     {
-        p->data.data=num;
-        p->flag=1;
+        if(w == 1)
+        {
+            p->data.data=num*(-1);
+            p->flag=1;
+        }
+        else
+        {
+            p->data.data=num;
+            p->flag=1;
+        }
     }
     else                              //第一个字符可能不是数字而是左括号，其他情况先不讨论
     {
-        p->data.ch=s[i++];
+        if(w==1)         //这时候第二个字符为左括号
+        {
+            p->data.data=0;         //括号前负号相当于前面有个0
+            p->flag=1;
+            p=p->next=(Expression*)malloc(sizeof(Expression));
+            p->data.ch='-';
+            p->flag=2;
+            p=p->next=(Expression*)malloc(sizeof(Expression));
+        }
+        p->data.ch=s[i++];          //无论前面有没有负号这里都有个左括号
         p->flag=2;
     }
-
     while(s[i]!='\0')
     {
         num=0;
@@ -255,13 +277,12 @@ void output_Expression(Expression *head)
     while(head!=NULL)
     {
         if(head->flag == 1)
-            printf("%d",head->data.data);
+            printf("%d ",head->data.data);
         if((head->flag == 2) && (head->data.ch!='#'))
-            printf("%c",head->data.ch);
+            printf("%c ",head->data.ch);
         head=head->next;
     }
 }
-
 
 //检查表达式
 Status check_Expression(Expression *head)
@@ -315,6 +336,7 @@ Status check_Bracket(Expression *head)
     else
         return SUCCESS;
 }
+
 
 //将链表逆转
 //使用的所有链表头节点都是不放数据的
@@ -480,9 +502,11 @@ void menu()
         goto E;                                     //使用goto语句是防止递归调用回溯后再次输出原表达式
     }
 
-    p1=backspin(head);
-    p2=transform(p1);
+    p1=backspin(head);          //表达式反转
+
+    p2=transform(p1);           //转为前缀表达式
     p3=backspin(p2);
+
     goto_xy(11,12);
     printf("前缀表达式为：");
     output_Expression(p3);
